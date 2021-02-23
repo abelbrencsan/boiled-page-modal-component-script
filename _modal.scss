@@ -84,7 +84,10 @@ div.modal {
 			padding: $box-padding;
 			width: 90vw;
 
-			> :last-child,
+			> :last-child {
+				margin-bottom: $box-padding;
+			}
+
 			> :last-child > :last-child,
 			> :last-child > :last-child > :last-child {
 				margin-bottom: 0;
