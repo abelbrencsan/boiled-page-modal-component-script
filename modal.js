@@ -1,5 +1,5 @@
 /**
- * Modal - v1.0.0
+ * Modal - v1.1.0
  * Copyright 2020 Abel Brencsan
  * Released under the MIT License
  */
@@ -484,22 +484,6 @@ Modal.prototype = function () {
 				});
 			}
 			modal.isWrapperCreated = true;
-		},
-
-		/**
-		 * Get value of "isTriggerInitialized" to be able to check modal is initialized or not. (public)
-		 * @return boolean
-		 */
-		getIsTriggerInitialized: function() {
-			return this.isTriggerInitialized;
-		},
-
-		/**
-		 * Get value of modal "isOpened" to be able to check modal is opened or not. (public)
-		 * @return boolean
-		 */
-		getIsModalOpened: function() {
-			return modal.isOpened;
 		}
 	};
 
@@ -509,9 +493,7 @@ Modal.prototype = function () {
 		open: modal.open,
 		close: modal.close,
 		accept: modal.accept,
-		remove: modal.remove,
-		getIsTriggerInitialized: modal.getIsTriggerInitialized,
-		getIsModalOpened: modal.getIsModalOpened
+		remove: modal.remove
 	};
 
 }();

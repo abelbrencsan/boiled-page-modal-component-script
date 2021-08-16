@@ -216,14 +216,6 @@ Option| Type | Default | Required | Description
 
 `remove()` - Remove modal from the DOM, set focus back to the element which was active before modal was opened.
 
-##### Check modal trigger is initialized or not
-
-`getIsTriggerInitialized()` - Check modal trigger is initialized or not. It returns `true` when it is already initialized, `false` if not.
-
-##### Check modal is opened or not
-
-`getIsModalOpened()` - Check modal is opened or not. It returns `true` when it is already opened, `false` if not.
-
 #### Initialize modals with HTML attributes
 
 Add `modals` property to `app` object in `assets/js/app.js`.
