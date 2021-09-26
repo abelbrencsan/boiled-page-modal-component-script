@@ -109,7 +109,7 @@ div.modal {
   &.modal--narrow {
 
     > div.modal-item.modal-item--dialog  {
-      max-width: ($container-width / 1.5) - $grid-gutter;
+      max-width: ($container-width * 0.666) - $grid-gutter;
     }
   }
 }
@@ -125,7 +125,7 @@ div.modal {
   &.modal--half {
 
     > div.modal-item.modal-item--dialog {
-      max-width: ($container-width / 2 );
+      max-width: ($container-width * 0.5);
     }
   }
 }
