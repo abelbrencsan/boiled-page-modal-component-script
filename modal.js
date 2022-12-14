@@ -465,11 +465,11 @@ Modal.prototype = function () {
 				});
 			}
 			modal.wrapper.addEventListener('keydown', function(event) {
-				if (event.keyCode === 27 && self.closeOnEsc) {
+				if (event.key === 'Escape' && self.closeOnEsc) {
 					event.stopPropagation();
 					modal.close.call(self);
 				}
-				if (event.keyCode === 9) modal.maintainFocus.call(self, event);
+				if (event.key === 'Escape') modal.maintainFocus.call(self, event);
 			});
 			if (this.hasAnimation) {
 				modal.wrapper.addEventListener('animationend', function(event) {
