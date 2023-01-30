@@ -469,7 +469,7 @@ Modal.prototype = function () {
 					event.stopPropagation();
 					modal.close.call(self);
 				}
-				if (event.key === 'Escape') modal.maintainFocus.call(self, event);
+				if (event.key === 'Tab') modal.maintainFocus.call(self, event);
 			});
 			if (this.hasAnimation) {
 				modal.wrapper.addEventListener('animationend', function(event) {
