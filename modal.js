@@ -1,6 +1,6 @@
 /**
- * Modal - v1.1.0
- * Copyright 2021 Abel Brencsan
+ * Modal - v1.1.1
+ * Copyright 2024 Abel Brencsan
  * Released under the MIT License
  */
 
@@ -30,6 +30,7 @@ var Modal = function(options) {
 		customAcceptTriggerSelector: null,
 		initTriggerCallback: null,
 		removeTriggerCallback: null,
+		beforeOpenCallback: null,
 		openCallback: null,
 		closeCallback: null,
 		acceptCallback: null,
@@ -67,6 +68,7 @@ var Modal = function(options) {
 	this.isTriggerInitialized = false;
 	this.hasAnimation = false;
 	this.isAccepted = false;
+	this.isOpenable = true;
 
 	if (this.openAnimationName && this.closeAnimationName) {
 		this.hasAnimation = true;
@@ -128,37 +130,40 @@ Modal.prototype = function () {
 		*/
 		open: function() {
 			if (modal.isOpened) return;
-			modal.createWrapper.call(this);
-			modal.isOpened = true;
-			document.body.classList.add(this.isModalOpenedClass);
-			if (this.hasAnimation) modal.wrapper.classList.add(this.isOpeningClass);
-			switch(this.type) {
-				case 'image':
-					modal.loadImage.call(this);
-					break;
-				case 'video':
-					modal.loadVideo.call(this);
-					break;
-				case 'youtube':
-					modal.loadYouTube.call(this);
-					break;
-				case 'vimeo':
-					modal.loadVimeo.call(this);
-					break;
-				case 'dialog':
-					modal.loadDialog.call(this);
-					break;
-				case 'ajax':
-					modal.loadAjax.call(this);
-					break;
+			if (this.beforeOpenCallback) this.beforeOpenCallback.call(this);
+			if (this.isOpenable) {
+				modal.createWrapper.call(this);
+				modal.isOpened = true;
+				document.body.classList.add(this.isModalOpenedClass);
+				if (this.hasAnimation) modal.wrapper.classList.add(this.isOpeningClass);
+				switch(this.type) {
+					case 'image':
+						modal.loadImage.call(this);
+						break;
+					case 'video':
+						modal.loadVideo.call(this);
+						break;
+					case 'youtube':
+						modal.loadYouTube.call(this);
+						break;
+					case 'vimeo':
+						modal.loadVimeo.call(this);
+						break;
+					case 'dialog':
+						modal.loadDialog.call(this);
+						break;
+					case 'ajax':
+						modal.loadAjax.call(this);
+						break;
+				}
+				if (this.openCallback) this.openCallback.call(this, {
+					wrapper: modal.wrapper,
+					backdrop: modal.backdrop,
+					spinner: modal.spinner,
+					item: modal.item,
+					closeButton: modal.closeButton
+				});
 			}
-			if (this.openCallback) this.openCallback.call(this, {
-				wrapper: modal.wrapper,
-				backdrop: modal.backdrop,
-				spinner: modal.spinner,
-				item: modal.item,
-				closeButton: modal.closeButton
-			});
 		},
 
 		/**
@@ -225,7 +230,13 @@ Modal.prototype = function () {
 				modal.wrapper.appendChild(modal.item);
 				modal.wrapper.classList.add(self.isLoadedClass);
 				modal.setFocus.call(self);
-				if (self.loadCallback) self.loadCallback.call(self);
+				if (self.loadCallback) self.loadCallback.call(self, {
+					wrapper: modal.wrapper,
+					backdrop: modal.backdrop,
+					spinner: modal.spinner,
+					item: modal.item,
+					closeButton: modal.closeButton
+				});
 			};
 			modal.item.onerror = function(){
 				modal.setFocus.call(self);
@@ -248,7 +259,13 @@ Modal.prototype = function () {
 				modal.wrapper.appendChild(modal.item);
 				modal.wrapper.classList.add(self.isLoadedClass);
 				modal.setFocus.call(self);
-				if (self.loadCallback) self.loadCallback.call(self);
+				if (self.loadCallback) self.loadCallback.call(self, {
+					wrapper: modal.wrapper,
+					backdrop: modal.backdrop,
+					spinner: modal.spinner,
+					item: modal.item,
+					closeButton: modal.closeButton
+				});
 			};
 			modal.item.onerror = function(){
 				modal.setFocus.call(self);
@@ -273,7 +290,13 @@ Modal.prototype = function () {
 			modal.wrapper.appendChild(modal.item);
 			modal.wrapper.classList.add(this.isLoadedClass);
 			modal.setFocus.call(this);
-			if (this.loadCallback) this.loadCallback.call(this);
+			if (this.loadCallback) this.loadCallback.call(this, {
+				wrapper: modal.wrapper,
+				backdrop: modal.backdrop,
+				spinner: modal.spinner,
+				item: modal.item,
+				closeButton: modal.closeButton
+			});
 		},
 
 		/**
@@ -294,7 +317,13 @@ Modal.prototype = function () {
 			modal.wrapper.appendChild(modal.item);
 			modal.wrapper.classList.add(this.isLoadedClass);
 			modal.setFocus.call(this);
-			if (this.loadCallback) this.loadCallback.call(this);
+			if (this.loadCallback) this.loadCallback.call(this, {
+				wrapper: modal.wrapper,
+				backdrop: modal.backdrop,
+				spinner: modal.spinner,
+				item: modal.item,
+				closeButton: modal.closeButton
+			});
 		},
 
 		/**
@@ -328,7 +357,13 @@ Modal.prototype = function () {
 				modal.wrapper.setAttribute('aria-describedby', modal.item.getAttribute('aria-describedby'));
 				modal.item.removeAttribute('aria-describedby');
 			}
-			if (this.loadCallback) this.loadCallback.call(this);
+			if (this.loadCallback) this.loadCallback.call(this, {
+				wrapper: modal.wrapper,
+				backdrop: modal.backdrop,
+				spinner: modal.spinner,
+				item: modal.item,
+				closeButton: modal.closeButton
+			});
 		},
 
 		/**
@@ -351,7 +386,13 @@ Modal.prototype = function () {
 						modal.wrapper.classList.add(self.isLoadedClass);
 						modal.setFocus.call(self);
 						modal.setCustomTriggers.call(self);
-						if (self.loadCallback) self.loadCallback.call(self);
+						if (self.loadCallback) self.loadCallback.call(self, {
+							wrapper: modal.wrapper,
+							backdrop: modal.backdrop,
+							spinner: modal.spinner,
+							item: modal.item,
+							closeButton: modal.closeButton
+						});
 					}
 					else {
 						modal.setFocus.call(self);
