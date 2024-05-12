@@ -202,19 +202,19 @@ Option| Type | Default | Required | Description
 
 ##### Open modal
 
-`open()` - Create modal to the DOM, load and append modal item based on its type.
+`open()` - Open modal. Modal is created and added to the DOM by initialized type.
 
 ##### Close modal
 
-`close()` - Close opened modal, call `remove()` method after closing animation is finished (or animation is not enabled).
+`close()` - Close opened modal. Modal is removed from DOM after closing animation is finished.
 
 ##### Accept modal
 
-`accept()` - Set modal as accepted. It is useful for making confirmation dialogs.
+`accept()` - Accept modal. Setting modal as accepted is useful for making confirmation dialogs.
 
 ##### Remove modal
 
-`remove()` - Remove modal from the DOM, set focus back to the element which was active before modal was opened.
+`remove()` - Remove modal from the DOM. Set focus back to the element which was active before modal was opened.
 
 #### Initialize modals with HTML attributes
 

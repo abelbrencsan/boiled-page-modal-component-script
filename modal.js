@@ -1,23 +1,28 @@
 /**
- * Modal - v1.1.1
+ * Modal
  * Copyright 2024 Abel Brencsan
  * Released under the MIT License
  */
-
-var Modal = function(options) {
+const Modal = function(options) {
 
 	'use strict';
 
 	// Supported modal types
-	var modalTypes = ['image', 'video', 'youtube', 'vimeo', 'dialog', 'ajax'];
+	let modalTypes = ['image', 'video', 'youtube', 'vimeo', 'dialog', 'ajax'];
 
 	// Test required options
-	if (typeof options.type !== 'string') throw 'Modal "type" option must be a string';
-	if (typeof options.source !== 'string') throw 'Modal "source" option must be a string';
-	if (modalTypes.indexOf(options.type) === -1) throw 'Given modal type is not supported';
+	if (typeof options.type !== 'string') {
+		throw 'Modal "type" option must be a string';
+	}
+	if (typeof options.source !== 'string') {
+		throw 'Modal "source" option must be a string';
+	}
+	if (modalTypes.indexOf(options.type) === -1) {
+		throw 'Given modal type is not supported';
+	}
 
 	// Default modal instance options
-	var defaults = {
+	let defaults = {
 		type: null,
 		source: null,
 		trigger: null,
@@ -60,20 +65,21 @@ var Modal = function(options) {
 	};
 
 	// Extend modal instance options with defaults
-	for (var key in defaults) {
+	for (let key in defaults) {
 		this[key] = (options.hasOwnProperty(key)) ? options[key] : defaults[key];
 	}
 
 	// Modal instance variables
+	this.triggerEventListener = null;
 	this.isTriggerInitialized = false;
 	this.hasAnimation = false;
 	this.isAccepted = false;
 	this.isOpenable = true;
 
+	// Animation is enabled
 	if (this.openAnimationName && this.closeAnimationName) {
 		this.hasAnimation = true;
 	}
-
 };
 
 Modal.prototype = function () {
@@ -81,9 +87,9 @@ Modal.prototype = function () {
 	'use strict';
 
 	// Selector for focusable elements
-	var focusSelector = 'input, select, textarea, a[href], button, [tabindex], audio[controls], video[controls], [contenteditable]:not([contenteditable="false"])';
+	let focusSelector = 'input, select, textarea, a[href], button, [tabindex], audio[controls], video[controls], [contenteditable]:not([contenteditable="false"])';
 	
-	var modal = {
+	let modal = {
 
 		wrapper: null,
 		backdrop: null,
@@ -96,18 +102,22 @@ Modal.prototype = function () {
 		isWrapperCreated: false,
 
 		/**
-		* Initialize modal trigger. (public)
+		* Initialize modal trigger.
+		* 
+		* @public
 		*/
 		initTrigger: function() {
 			if (this.isTriggerInitialized) return;
-			this.triggerEventListener = modal.triggerEventListener.bind(this);
+			this.triggerEventListener = modal.onTriggerClick.bind(this);
 			this.trigger.addEventListener('click', this.triggerEventListener);
 			this.isTriggerInitialized = true;
 			if (this.initTriggerCallback) this.initTriggerCallback.call(this);
 		},
 
 		/**
-		* Remove related events from modal trigger. (public)
+		* Remove related events from modal trigger.
+		* 
+		* @public
 		*/
 		removeTrigger: function() {
 			if (!this.isTriggerInitialized) return;
@@ -117,16 +127,21 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Open modal on trigger click. (private)
-		* @param event object
+		* Open modal when trigger is clicked.
+		* 
+		* @private
+		* @param {Event} event
 		*/
-		triggerEventListener: function(event) {
+		onTriggerClick: function(event) {
 			event.preventDefault();
 			modal.open.call(this);
 		},
 
 		/**
-		* Create modal to the DOM, load and append modal item based on its type. (public)
+		* Open modal.
+		* Modal is created and added to the DOM by initialized type.
+		* 
+		* @public
 		*/
 		open: function() {
 			if (modal.isOpened) return;
@@ -167,7 +182,10 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Close opened modal, call `remove()` method after closing animation is finished (or animation is not enabled). (public)
+		* Close opened modal.
+		* Modal is removed from DOM after closing animation is finished.
+		* 
+		* @public
 		*/
 		close: function() {
 			if (!modal.isOpened) return;
@@ -189,7 +207,10 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Set modal as accepted. It is useful for making confirmation dialogs. (public)
+		* Accept modal.
+		* Setting modal as accepted is useful for making confirmation dialogs.
+		* 
+		* @public
 		*/
 		accept: function() {
 			if (this.isAccepted) return;
@@ -198,7 +219,10 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Remove modal from the DOM, set focus back to the element which was active before modal was opened. (public)
+		* Remove modal from the DOM.
+		* Set focus back to the element which was active before modal was opened.
+		* 
+		* @public
 		*/
 		remove: function() {
 			if (!modal.isWrapperCreated) return;
@@ -217,20 +241,21 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Load image modal item. (private)
+		* Load modal item whe type is image.
+		* 
+		* @private
 		*/
 		loadImage: function() {
-			var self = this;
 			modal.item = new Image();
 			modal.item.src = this.source;
-			modal.item.onload = function(){
-				modal.item.classList.add(self.modalItemClass);
-				modal.item.classList.add(self.modalItemImageClass);
-				modal.addCustomItemClasses.call(self);
+			modal.item.onload = () => {
+				modal.item.classList.add(this.modalItemClass);
+				modal.item.classList.add(this.modalItemImageClass);
+				modal.addCustomItemClasses.call(this);
 				modal.wrapper.appendChild(modal.item);
-				modal.wrapper.classList.add(self.isLoadedClass);
-				modal.setFocus.call(self);
-				if (self.loadCallback) self.loadCallback.call(self, {
+				modal.wrapper.classList.add(this.isLoadedClass);
+				modal.setFocus.call(this);
+				if (this.loadCallback) this.loadCallback.call(this, {
 					wrapper: modal.wrapper,
 					backdrop: modal.backdrop,
 					spinner: modal.spinner,
@@ -239,27 +264,28 @@ Modal.prototype = function () {
 				});
 			};
 			modal.item.onerror = function(){
-				modal.setFocus.call(self);
+				modal.setFocus.call(this);
 			};
 		},
 
 		/**
-		* Load HTML video modal item. (private)
+		* Load modal item when type is HTML video.
+		* 
+		* @private
 		*/
 		loadVideo: function() {
-			var self = this;
 			modal.item = document.createElement('video');
 			modal.item.src = this.source;
 			modal.item.autoplay = true;
 			modal.item.controls = 1;
-			modal.item.onloadedmetadata = function() {
-				modal.item.classList.add(self.modalItemClass);
-				modal.item.classList.add(self.modalItemVideoClass);
-				modal.addCustomItemClasses.call(self);
+			modal.item.onloadedmetadata = () => {
+				modal.item.classList.add(this.modalItemClass);
+				modal.item.classList.add(this.modalItemVideoClass);
+				modal.addCustomItemClasses.call(this);
 				modal.wrapper.appendChild(modal.item);
-				modal.wrapper.classList.add(self.isLoadedClass);
-				modal.setFocus.call(self);
-				if (self.loadCallback) self.loadCallback.call(self, {
+				modal.wrapper.classList.add(this.isLoadedClass);
+				modal.setFocus.call(this);
+				if (this.loadCallback) this.loadCallback.call(this, {
 					wrapper: modal.wrapper,
 					backdrop: modal.backdrop,
 					spinner: modal.spinner,
@@ -268,16 +294,18 @@ Modal.prototype = function () {
 				});
 			};
 			modal.item.onerror = function(){
-				modal.setFocus.call(self);
+				modal.setFocus.call(this);
 			};
 		},
 
 		/**
-		* Load YouTube video modal item as an iframe. (private)
+		* Load modal item as an iframe if type is YouTube video.
+		* 
+		* @private
 		*/
 		loadYouTube: function() {
-			var match = this.source.match(/(youtube|youtu)\.(com|be)\/(watch\?v=([\w-]+)|([\w-]+))/);
-			var videoID = (match[1] === 'youtube') ? match[4] : match[5];
+			let match = this.source.match(/(youtube|youtu)\.(com|be)\/(watch\?v=([\w-]+)|([\w-]+))/);
+			let videoID = (match[1] === 'youtube') ? match[4] : match[5];
 			modal.item = document.createElement('iframe');
 			modal.item.src = 'https://www.youtube.com/embed/' + videoID + '?rel=0&amp;autoplay=1&amp;showinfo=0';
 			modal.item.setAttribute('allowfullscreen', '');
@@ -300,11 +328,13 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Load Vimeo video modal item as an iframe. (private)
+		* Load modal item as an iframe if type is Vimeo video.
+		* 
+		* @private
 		*/
 		loadVimeo: function() {
-			var match = this.source.match(/vimeo\.com\/([\w-]+)/);
-			var videoID = match[1];
+			let match = this.source.match(/vimeo\.com\/([\w-]+)/);
+			let videoID = match[1];
 			modal.item = document.createElement('iframe');
 			modal.item.src = 'https://player.vimeo.com/video/' + videoID + '?autoplay=1&title=0&byline=0&portrait=0';
 			modal.item.setAttribute('allowfullscreen', '');
@@ -327,10 +357,12 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Load dialog modal item. (private)
+		* Load modal item when type is dialog.
+		* 
+		* @private
 		*/
 		loadDialog: function() {
-			var sourceDialog = document.querySelector(this.source);
+			let sourceDialog = document.querySelector(this.source);
 			if (!sourceDialog) {
 				modal.setFocus.call(this);
 				return;
@@ -367,26 +399,27 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Load dialog modal item for ajax fetched contents. (private)
+		* Load modal item when type is AJAX.
+		* 
+		* @private
 		*/
 		loadAjax: function() {
-			var self = this;
-			var xmlHttp = new XMLHttpRequest();
-			xmlHttp.onreadystatechange = function() {
+			let xmlHttp = new XMLHttpRequest();
+			xmlHttp.onreadystatechange = () => {
 				if (xmlHttp.readyState == 4) {
 					if (xmlHttp.status == 200) {
 						modal.item = document.createElement('div');
-						modal.item.classList.add(self.modalItemClass);
-						modal.item.classList.add(self.modalItemDialogClass);
-						modal.item.classList.add(self.modalItemAjaxClass);
-						modal.addCustomItemClasses.call(self);
+						modal.item.classList.add(this.modalItemClass);
+						modal.item.classList.add(this.modalItemDialogClass);
+						modal.item.classList.add(this.modalItemAjaxClass);
+						modal.addCustomItemClasses.call(this);
 						modal.item.setAttribute('tabindex', '-1');
 						modal.item.innerHTML = xmlHttp.responseText;
 						modal.wrapper.appendChild(modal.item);
-						modal.wrapper.classList.add(self.isLoadedClass);
-						modal.setFocus.call(self);
-						modal.setCustomTriggers.call(self);
-						if (self.loadCallback) self.loadCallback.call(self, {
+						modal.wrapper.classList.add(this.isLoadedClass);
+						modal.setFocus.call(this);
+						modal.setCustomTriggers.call(this);
+						if (this.loadCallback) this.loadCallback.call(this, {
 							wrapper: modal.wrapper,
 							backdrop: modal.backdrop,
 							spinner: modal.spinner,
@@ -395,7 +428,7 @@ Modal.prototype = function () {
 						});
 					}
 					else {
-						modal.setFocus.call(self);
+						modal.setFocus.call(this);
 					}
 				}
 			}
@@ -405,37 +438,42 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Add custom classes to modal item. (private)
+		* Add custom classes to modal item.
+		* 
+		* @private
 		*/
 		addCustomItemClasses: function() {
-			for (var i = 0; i < this.customItemClasses.length; i++) {
+			for (let i = 0; i < this.customItemClasses.length; i++) {
 				modal.item.classList.add(this.customItemClasses[i]);
 			}
 		},
 
 		/**
-		* Set custom close and accept triggers. (private)
+		* Set custom close and accept triggers.
+		* 
+		* @private
 		*/
 		setCustomTriggers: function() {
-			var self = this;
-			var customCloseTriggers = modal.item.querySelectorAll(this.customCloseTriggerSelector);
-			var customAcceptTriggers = modal.item.querySelectorAll(this.customAcceptTriggerSelector);
-			for (var i = 0; i < customCloseTriggers.length; i++) {
-				customCloseTriggers[i].addEventListener('click', function(event) {
+			let customCloseTriggers = modal.item.querySelectorAll(this.customCloseTriggerSelector);
+			let customAcceptTriggers = modal.item.querySelectorAll(this.customAcceptTriggerSelector);
+			for (let i = 0; i < customCloseTriggers.length; i++) {
+				customCloseTriggers[i].addEventListener('click', (event) => {
 					event.stopPropagation();
-					modal.close.call(self);
+					modal.close.call(this);
 				});
 			}
-			for (var i = 0; i < customAcceptTriggers.length; i++) {
-				customAcceptTriggers[i].addEventListener('click', function(event) {
+			for (let i = 0; i < customAcceptTriggers.length; i++) {
+				customAcceptTriggers[i].addEventListener('click', (event) => {
 					event.stopPropagation();
-					modal.accept.call(self);
+					modal.accept.call(this);
 				});
 			}
 		},
 
 		/**
-		* Find focusable elements in loaded modal, set focus to the first one. (private)
+		* Find focusable elements in modal and set focus to the first one.
+		* 
+		* @private
 		*/
 		setFocus: function() {
 			modal.activeElement = document.activeElement;
@@ -450,10 +488,12 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Keep focus in loaded modal on tab key press. (private)
-		* @param event object
+		* Keep focus inside modal when tab key is pressed.
+		* 
+		* @private
+		* @param {Event} event
 		*/
-		maintainFocus: function(event) {
+		onTabKeyPress: function(event) {
 			if (event.shiftKey) {
 				if (document.activeElement === modal.focusableElements[0]) {
 					event.preventDefault();
@@ -469,10 +509,11 @@ Modal.prototype = function () {
 		},
 
 		/**
-		* Create modal wrapper, backdrop close button and spinner. (private)
+		* Create modal wrapper, backdrop close button and spinner.
+		* 
+		* @private
 		*/
 		createWrapper: function() {
-			var self = this;
 			modal.wrapper = document.createElement('div');
 			modal.backdrop = document.createElement('div');
 			modal.spinner = document.createElement('div');
@@ -485,7 +526,7 @@ Modal.prototype = function () {
 			modal.wrapper.appendChild(modal.backdrop);
 			modal.wrapper.appendChild(modal.spinner);
 			if (this.itemLabel) modal.wrapper.setAttribute('aria-label', this.itemLabel);
-			for (var i = 0; i < this.customClasses.length; i++) {
+			for (let i = 0; i < this.customClasses.length; i++) {
 				modal.wrapper.classList.add(this.customClasses[i]);
 			}
 			if (this.closeButton) {
@@ -494,33 +535,35 @@ Modal.prototype = function () {
 				modal.closeButton.classList.add(this.modalCloseClass);
 				if (this.closeButtonLabel) modal.closeButton.setAttribute('aria-label', this.closeButtonLabel);
 				modal.wrapper.appendChild(modal.closeButton);
-				modal.closeButton.addEventListener('click', function(event) {
+				modal.closeButton.addEventListener('click', (event) => {
 					event.stopPropagation();
-					modal.close.call(self);
+					modal.close.call(this);
 				});
 			}
 			if (this.closeOnBackdropClick) {
-				modal.backdrop.addEventListener('click', function(event) {
+				modal.backdrop.addEventListener('click', (event) => {
 					event.stopPropagation();
-					modal.close.call(self);
+					modal.close.call(this);
 				});
 			}
-			modal.wrapper.addEventListener('keydown', function(event) {
-				if (event.key === 'Escape' && self.closeOnEsc) {
+			modal.wrapper.addEventListener('keydown', (event) => {
+				if (event.key === 'Escape' && this.closeOnEsc) {
 					event.stopPropagation();
-					modal.close.call(self);
+					modal.close.call(this);
 				}
-				if (event.key === 'Tab') modal.maintainFocus.call(self, event);
+				if (event.key === 'Tab') {
+					modal.onTabKeyPress.call(this, event);
+				}
 			});
 			if (this.hasAnimation) {
-				modal.wrapper.addEventListener('animationend', function(event) {
-					if (!modal.isOpened && event.animationName == self.closeAnimationName) {
-						modal.wrapper.classList.add(self.isClosedClass);
-						modal.remove.call(self);
+				modal.wrapper.addEventListener('animationend', (event) => {
+					if (!modal.isOpened && event.animationName == this.closeAnimationName) {
+						modal.wrapper.classList.add(this.isClosedClass);
+						modal.remove.call(this);
 					}
-					if (event.animationName == self.openAnimationName) {
-						modal.wrapper.classList.remove(self.isOpeningClass);
-						modal.wrapper.classList.add(self.isOpenedClass);
+					if (event.animationName == this.openAnimationName) {
+						modal.wrapper.classList.remove(this.isOpeningClass);
+						modal.wrapper.classList.add(this.isOpenedClass);
 					}
 				});
 			}
